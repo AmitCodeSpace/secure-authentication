@@ -3,7 +3,9 @@ package com.amit.security.employee.service.impl;
 import com.amit.security.auth.request.RegisterRequest;
 import com.amit.security.constants.Role;
 import com.amit.security.employee.model.Employee;
+import com.amit.security.employee.model.UserActivityLog;
 import com.amit.security.employee.repository.EmployeeRepository;
+import com.amit.security.employee.repository.UserActivityLogRepository;
 import com.amit.security.employee.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final UserActivityLogRepository activityLogRepository;
 
     @Override
     public Employee getEmployee(String email) {
@@ -30,5 +33,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> getEmployees() {
         return employeeRepository.findAll().stream().filter(emp -> emp.getRole() != Role.SUPER_ADMIN && emp.getRole() != Role.SYSTEM_ADMIN).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserActivityLog> getActivityLogs(String email) {
+        return activityLogRepository.getUserActivityLogByUsername(email);
     }
 }

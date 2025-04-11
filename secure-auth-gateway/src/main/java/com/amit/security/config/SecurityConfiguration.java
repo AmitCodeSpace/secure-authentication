@@ -1,11 +1,11 @@
 package com.amit.security.config;
 
 
+
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -20,15 +20,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static com.amit.security.constants.Role.*;
 import static org.springframework.http.HttpHeaders.*;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.*;
-import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 
 
@@ -43,8 +38,6 @@ public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final CustomUserDetailsService userDetailsService;
-//    private final AuthenticationProvider authenticationProvider;
-
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
@@ -61,15 +54,6 @@ public class SecurityConfiguration {
         return provider;
     }
 
-
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setUserDetailsService(userDetailsService);  // use injected bean
-//        provider.setPasswordEncoder(passwordEncoder());        // use injected bean
-//        return provider;
-//    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -81,17 +65,11 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configure(http))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(UNAUTHENTICATED_URLS).permitAll()
-                        .requestMatchers("/api/v1/management/**").hasAnyRole(SYSTEM_ADMIN.name(), SUPER_ADMIN.name())
-//                        .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-//                        .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-//                        .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-//                        .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-//                        .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
+//                        .requestMatchers("/api/v1/management/**").hasAnyRole(SYSTEM_ADMIN.name(), SUPER_ADMIN.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

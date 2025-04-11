@@ -1,11 +1,11 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import type { AuthenticationRequest, AuthenticationResponse } from "../models/authentication"
-import { login, verifyCode } from "../services/authenticationService"
-import { Eye, EyeOff } from "lucide-react" // Importing eye icons
+import {useEffect, useState} from "react"
+import {useNavigate} from "react-router-dom"
+import type {AuthenticationRequest, AuthenticationResponse} from "../models/authentication"
+import {login, verifyCode} from "../services/authenticationService"
+import {Eye, EyeOff} from "lucide-react" // Importing eye icons
 import "./styles/Login.css"
 
 const LOCKOUT_DURATION = 60 * 3 // 1 hour in seconds
@@ -98,7 +98,8 @@ const Login: React.FC = () => {
             localStorage.removeItem("lockoutTime")
 
             if (!response.mfaEnabled) {
-                localStorage.setItem("token", response.accessToken as string)
+                if (authResponse.data?.accessToken)
+                    localStorage.setItem("token", authResponse.data?.accessToken as string)
                 navigate("/dashboard")
             }
         } catch (error) {
@@ -124,7 +125,8 @@ const Login: React.FC = () => {
     const verifyTfa = async () => {
         try {
             const response = await verifyCode({ email: authRequest.email, code: otpCode })
-            localStorage.setItem("token", response.accessToken as string)
+            if (authResponse.data?.accessToken)
+                localStorage.setItem("token", authResponse.data?.accessToken as string)
             navigate("/dashboard")
         } catch (error) {
             alert("Verification failed")
@@ -143,7 +145,7 @@ const Login: React.FC = () => {
     return (
         <div className="container">
             <div className="center-box">
-                {authResponse.mfaEnabled ? (
+                {authResponse.data?.mfaEnabled ? (
                     <div className="two-fa-setup">
                         <h2>Two-Factor Authentication</h2>
                         <input

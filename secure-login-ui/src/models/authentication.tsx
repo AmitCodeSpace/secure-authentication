@@ -29,9 +29,14 @@ export interface AuthenticationRequest {
 }
 
 export interface AuthenticationResponse {
-    accessToken?: string;
-    mfaEnabled?: boolean;
-    secretImageUri?: string;
+    success?: boolean;
+    statusCode?: number;
+    message?: string;
+    data?: {
+        accessToken?: string;
+        mfaEnabled?: boolean;
+        secretImageUri?: string;
+    }
 }
 
 export interface VerificationRequest {
